@@ -8,16 +8,16 @@ pygame.init()
 # create the screen with 800px width, 600px height
 screen = pygame.display.set_mode((800, 600))
 pygame.display.set_caption("Space Invaders")
-icon = pygame.image.load("icon.png")
+icon = pygame.image.load("img/icon.png")
 
-background = pygame.image.load("background.png")
-mixer.music.load("back-music.mp3")
+background = pygame.image.load("img/background.png")
+mixer.music.load("music/back-music.mp3")
 mixer.music.play(-1)
 
 pygame.display.set_icon(icon)
 
 
-playerImg = pygame.image.load("airplane.png")
+playerImg = pygame.image.load("img/airplane.png")
 playerX = 336
 playerY = 460
 playerX_change = 0
@@ -30,17 +30,17 @@ enemyY_change = []
 num_enemies = 5
 
 for i in range(num_enemies):
-	enemyImg.append(pygame.image.load("alien.png"))
+	enemyImg.append(pygame.image.load("img/alien.png"))
 	enemyX.append(random.randint(30, 729))
 	enemyY.append(random.randint(0, 150))
-	enemyX_change.append(6.3)
+	enemyX_change.append(1.3)
 	enemyY_change.append(50)
 
-bulletImg = pygame.image.load("bullet.png")
+bulletImg = pygame.image.load("img/bullet.png")
 bulletX = 0
 bulletY = 460 
 bulletX_change = 0
-bulletY_change = 13
+bulletY_change = 8
 bullet_state = "ready"
 
 score = 0
@@ -86,12 +86,12 @@ while running:
 
 		if event.type == pygame.KEYDOWN:
 			if event.key == pygame.K_LEFT:
-				playerX_change -= 8
+				playerX_change -= 4
 			if event.key == pygame.K_RIGHT:
-				playerX_change += 8
+				playerX_change += 4
 			if bullet_state != "fire":
 				if event.key == pygame.K_SPACE:
-					bullet_sound = mixer.Sound("laser.wav")
+					bullet_sound = mixer.Sound("music/laser.wav")
 					bullet_sound.play()
 					bulletX = playerX	
 					fire_bullet(bulletX, playerY)
@@ -105,10 +105,10 @@ while running:
 		enemyX[i] += enemyX_change[i]
 		if enemyX[i] <= 0:
 			enemyY[i] += enemyY_change[i]
-			enemyX_change[i] = 3.9
+			enemyX_change[i] = 1.3
 		elif enemyX[i] >= 736:
 			enemyY[i] += enemyY_change[i]
-			enemyX_change[i] = -3.9
+			enemyX_change[i] = -1.3
 
 		collision = isCollision(enemyX[i], enemyY[i], bulletX, bulletY)
 		if collision:
@@ -117,7 +117,7 @@ while running:
 			score += 1
 			enemyX[i] = random.randint(30, 729)
 			enemyY[i] = random.randint(0, 80)
-			collide_sound = mixer.Sound("collide.wav")
+			collide_sound = mixer.Sound("music/collide.wav")
 			collide_sound.play()
 
 		enemy(enemyX[i], enemyY[i], i)
