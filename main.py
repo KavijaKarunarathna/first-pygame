@@ -1,6 +1,7 @@
 import pygame
 import random
 import math
+from pygame import mixer
 
 pygame.init()
 
@@ -8,7 +9,10 @@ pygame.init()
 screen = pygame.display.set_mode((800, 600))
 pygame.display.set_caption("Space Invaders")
 icon = pygame.image.load("icon.png")
+
 background = pygame.image.load("background.png")
+mixer.music.load("back-music.mp3")
+mixer.music.play(-1)
 
 pygame.display.set_icon(icon)
 
@@ -29,7 +33,7 @@ for i in range(num_enemies):
 	enemyImg.append(pygame.image.load("alien.png"))
 	enemyX.append(random.randint(30, 729))
 	enemyY.append(random.randint(0, 150))
-	enemyX_change.append(4)
+	enemyX_change.append(6.3)
 	enemyY_change.append(50)
 
 bulletImg = pygame.image.load("bullet.png")
@@ -43,6 +47,8 @@ score = 0
 font = pygame.font.Font("freesansbold.ttf", 32)
 textX = 10
 textY = 10 
+
+over_text = pygame.font.Font("freesansbold.ttf", 64)
 
 def fire_bullet(x, y):
 	global bullet_state, bulletX
@@ -65,6 +71,10 @@ def showScore(x, y, score):
 	score = font.render("Score: "+str(score), True, (255,255,255))
 	screen.blit(score, (x, y))
 
+def game_over_text():
+	game_over = over_text.render("Game Over", True, (255,255,255))
+	screen.blit(game_over, (200, 250))
+
 running = True
 while running:
 	screen.fill([255, 255, 255])
@@ -81,8 +91,11 @@ while running:
 				playerX_change += 8
 			if bullet_state != "fire":
 				if event.key == pygame.K_SPACE:
+					bullet_sound = mixer.Sound("laser.wav")
+					bullet_sound.play()
 					bulletX = playerX	
 					fire_bullet(bulletX, playerY)
+					
 
 		if event.type == pygame.KEYUP:
 			if event.key == pygame.K_LEFT or pygame.K_RIGHT:
@@ -104,8 +117,20 @@ while running:
 			score += 1
 			enemyX[i] = random.randint(30, 729)
 			enemyY[i] = random.randint(0, 80)
+			collide_sound = mixer.Sound("collide.wav")
+			collide_sound.play()
 
 		enemy(enemyX[i], enemyY[i], i)
+
+	for i in range(num_enemies):
+
+		if enemyY[i] > 400:
+			for j in range(num_enemies):
+				enemyY[j] = 2000
+			game_over_text()
+			break
+
+
 
 	if playerX + playerX_change > 20 and playerX + playerX_change < 660:
 		playerX += playerX_change
